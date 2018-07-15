@@ -6,6 +6,7 @@ import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
 import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from '../HeaderSearch';
+import { getUserEmail } from '../../utils/userinfo';
 import styles from './index.less';
 
 export default class GlobalHeader extends PureComponent {
@@ -70,14 +71,9 @@ export default class GlobalHeader extends PureComponent {
     } = this.props;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-        <Menu.Item disabled>
-          <Icon type="user" />Personal center
-        </Menu.Item>
+
         <Menu.Item disabled>
           <Icon type="setting" />Settings
-        </Menu.Item>
-        <Menu.Item key="triggerError">
-          <Icon type="close-circle" />Trigger error
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="logout">
@@ -85,7 +81,10 @@ export default class GlobalHeader extends PureComponent {
         </Menu.Item>
       </Menu>
     );
-    const noticeData = this.getNoticeData();
+
+    // Get the email address of the user
+    const userEmail = getUserEmail();
+    // const noticeData = this.getNoticeData();
     return (
       <div className={styles.header}>
         {isMobile && [
@@ -95,10 +94,10 @@ export default class GlobalHeader extends PureComponent {
           <Divider type="vertical" key="line" />,
         ]}
         <div className={styles.right}>
-          {currentUser.name ? (
+          {userEmail ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <span className={styles.name}>{currentUser.name}</span>
+                <span className={styles.name}>{userEmail}</span>
               </span>
             </Dropdown>
           ) : (

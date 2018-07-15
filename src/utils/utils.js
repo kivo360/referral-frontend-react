@@ -14,7 +14,7 @@ export function convertDateTime(timestamp){
   const day = convertedDate.getDate();
   const year = convertedDate.getFullYear();
 
-  const composite =  day + "/" + month + "/" + year;
+  const composite =  (month+1) + "/" + day + "/" + year;
   console.log(composite);
   return composite;
 }

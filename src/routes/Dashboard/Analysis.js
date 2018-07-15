@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import StripeCheckout from 'react-stripe-checkout';
 import { connect } from 'dva';
 import {
   Row,
@@ -12,8 +13,7 @@ import {
 	Divider
 } from 'antd';
 import { routerRedux } from 'dva/router';
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell} from 'recharts';
-
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area} from 'recharts';
 
 
 import { getTimeDistance, convertDateTime, occurrence } from '../../utils/utils';
@@ -46,12 +46,13 @@ export default class Analysis extends Component {
     this.state = {
       referralList: [],
       totalCount: 0,
-      firstDegree: 0,
-      secondDegree: 0,
-			thirdDegree: 0,
+      first: 0,
+      second: 0,
+      thrid: 0,
 			degreeCountList: [],
       currentTabKey: '',
-			visible: true,
+      visible: true,
+      prepay: true,
 			referralByDate: [],
       rangePickerValue: getTimeDistance('year'),
     };
@@ -103,11 +104,29 @@ export default class Analysis extends Component {
 
 	setReferralByDateInState(occuranceObject){
 		const refByDateList = [];
+		// const currentDate = (new Date().getDate())
+		
+		const convertedTime = convertDateTime((Date.now()/1000));
+		console.log(convertedTime)
+		// console.log()
+		let isThere = false;
 		for (const key of Object.keys(occuranceObject)) {
-			// console.log(key, occuranceObject[key].length);
+			if (key === convertedTime){
+				isThere = true;
+			}
 			refByDateList.push({
 				name: key,
 				referrals: occuranceObject[key].length,
+			});
+		}
+
+
+		// Check the convert the latest date into the format we need
+		if (!isThere){
+			console.log(refByDateList[refByDateList.length-1].referrals)
+			refByDateList.push({
+				name: convertedTime,
+				referrals: refByDateList[refByDateList.length-1].referrals,
 			});
 		}
 		// If the latest day isn't there, take the last referral response date
@@ -166,14 +185,14 @@ export default class Analysis extends Component {
       this.setState({
         referralList: refList,
         totalCount: referred.l1.count + referred.l2.count + referred.l3.count,
-        firstDegree: referred.l1.count,
-        secondDegree: referred.l2.count,
-				thirdDegree: referred.l3.count,
+        first: referred.l1.count,
+        second: referred.l2.count,
+        thrid: referred.l3.count,
 				degreeCountList: [
 					{name: '1st Degree', value: referred.l1.count},
 					{name: '2nd Degree', value: referred.l2.count},
 					{name: '3rd Degree', value: referred.l3.count},
-				]
+				],
       });
     }
 
@@ -185,17 +204,10 @@ export default class Analysis extends Component {
     });
   };
 
-  handleRangePickerChange = rangePickerValue => {
-    this.setState({
-      rangePickerValue,
-    });
 
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'chart/fetchSalesData',
-    });
-  };
-
+  onToken = (token) => {
+    console.log(token);
+  }
 
   showModal = () => {
     this.setState({
@@ -211,24 +223,19 @@ export default class Analysis extends Component {
   }
 
   handleCancel = (e) => {
-    console.log(e);
+    // console.log(e);
     this.setState({
       visible: false,
     });
   }
 
 
-
-  selectDate = type => {
+  dismissPrepay = (e) => {
     this.setState({
-      rangePickerValue: getTimeDistance(type),
-    });
+      prepay: false,
+    })
+  }
 
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'chart/fetchSalesData',
-    });
-  };
 
   isActive(type) {
     const { rangePickerValue } = this.state;
@@ -343,60 +350,147 @@ export default class Analysis extends Component {
     // Get some sort of data here
     // Convert user information into timeseries
     return (
-      <Fragment>
+      <Fragment >
           <Modal
             title="Funguana's Prelaunch Program"
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
+            width="50%"
           >	
-            <h4>This is the dashboard to keep track of your referrals.</h4>
+            <h2>Keep Track Of Your Referrals</h2>
+            <Divider />
             <p>Here you can:</p>
 						<ol>
 							<li>Get your referral code</li>
-							<li>See how many referrals you have per day</li>
-							<li>Find out the prizes you've gotten by asking your friends to give their email and do the same</li>
+							<li>Check on your referral stats</li>
+							<li>See if you achieved prizes</li>
 						</ol>
 						
 						<h2>How prizes work</h2>
 						<p>You can get prizes for getting people to enter their email in this prelaunch program.</p>
-						<p>The prizes work in multi-level tiers</p>
+						<p>The prizes work in multiple levels:</p>
 						<ol>
 							<li>Friends you recommend (1st Tier)</li>
 							<li>Friends of your friends (2nd Tier)</li>
 							<li>Friends of your friend's friends (3rd Tier)</li>
 						</ol>
 						<p>Check out the prizes at the bottom of the page. It will include the list of prizes (weighed towards 3rd tier), and the prizes you've won so far</p>
-						<h4>If you're interested in getting extra benefit upon launch and long-term discounts, buy your first months of subscription.</h4>
+						<h4>Buy your first month in advance. That way you'll have extra benefits like discounts.</h4>
           </Modal>
 
-          {/* Show if the user hasn't purchased anything yet */}
+          {/* Show if the user hasn't purchased anything yet or if the user hasn't disabled it */}
 					<Card 
 						title="Check Out These Prelaunch Deals"
-						extra={<a href="#">Dismiss</a>}
-					>
-            <Card.Grid style={gridStyle}>
-              <h4>Deal Name</h4>
-              <h1>$24.99</h1>
-              <p>Reason 1</p>
-              <p>Reason 2</p>
-              <p>Reason 3</p>
-            </Card.Grid>
-            <Card.Grid style={gridStyle}>
-              <h4>Deal Name</h4>
-              <h1>$29.99</h1>
-              <p>Reason 1</p>
-              <p>Reason 2</p>
-              <p>Reason 3</p>
+						extra={<a href="#">I Don't Want The Benefit</a>}
+					> 
+              <StripeCheckout
+                name="Funguana" // the pop-in header title
+                description="Prebook your bot" // the pop-in header subtitle
+                image="https://funguana.com/wp-content/uploads/2018/03/logo.png" // the pop-in header image (default none)
+                ComponentClass="div"
+                panelLabel="Pay" // prepended to the amount in the bottom pay button
+                amount={2499} // cents
+                currency="USD"
+                stripeKey="pk_live_oZtsGfDBpdVEr6OyyEAZtv9a"
+                // locale="en"
+                email="kevin@funguana.com"
+                // Note: Enabling either address option will give the user the ability to
+                // fill out both. Addresses are sent as a second parameter in the token callback.
+                // shippingAddress
+                // billingAddress={false}
+                // Note: enabling both zipCode checks and billing or shipping address will
+                // cause zipCheck to be pulled from billing address (set to shipping if none provided).
+                zipCode={false}
+                alipay // accept Alipay (default false)
+                bitcoin // accept Bitcoins (default false)
+                allowRememberMe // "Remember Me" option (default true)
+                token={this.onToken} // submit callback
+                reconfigureOnUpdate={false}
+                triggerEvent="onClick"
+              
+              >
+              
+                <Card.Grid style={gridStyle}>
+                  <h4>Deal Name</h4>
+                  <h1>$24.99</h1>
+                  <p>Reason 1</p>
+                  <p>Reason 2</p>
+                  <p>Reason 3</p>
 
-            </Card.Grid>
-            <Card.Grid style={gridStyle}>
-              <h4>Deal Name</h4>
-              <h1>$34.99</h1>
-              <p>Reason 1</p>
-              <p>Reason 2</p>
-              <p>Reason 3</p>
-            </Card.Grid>
+                </Card.Grid>
+              </StripeCheckout>
+              <StripeCheckout
+                name="Funguana" // the pop-in header title
+                description="Prebook your bot" // the pop-in header subtitle
+                image="https://funguana.com/wp-content/uploads/2018/03/logo.png" // the pop-in header image (default none)
+                ComponentClass="div"
+                panelLabel="Pay" // prepended to the amount in the bottom pay button
+                amount={2999} // cents
+                currency="USD"
+                stripeKey="pk_live_oZtsGfDBpdVEr6OyyEAZtv9a"
+                // locale="en"
+                email="kevin@funguana.com"
+                // Note: Enabling either address option will give the user the ability to
+                // fill out both. Addresses are sent as a second parameter in the token callback.
+                // shippingAddress
+                // billingAddress={false}
+                // Note: enabling both zipCode checks and billing or shipping address will
+                // cause zipCheck to be pulled from billing address (set to shipping if none provided).
+                zipCode={false}
+                alipay // accept Alipay (default false)
+                bitcoin // accept Bitcoins (default false)
+                allowRememberMe // "Remember Me" option (default true)
+                token={this.onToken} // submit callback
+                reconfigureOnUpdate={false}
+                triggerEvent="onClick"
+              
+              >
+              <Card.Grid style={gridStyle}>
+                <h4>Deal Name</h4>
+                <h1>$29.99</h1>
+                <p>Reason 1</p>
+                <p>Reason 2</p>
+                <p>Reason 3</p>
+
+              </Card.Grid>
+            </StripeCheckout>
+
+
+            <StripeCheckout
+                name="Funguana" // the pop-in header title
+                description="Prebook your bot" // the pop-in header subtitle
+                image="https://funguana.com/wp-content/uploads/2018/03/logo.png" // the pop-in header image (default none)
+                ComponentClass="div"
+                panelLabel="Pay" // prepended to the amount in the bottom pay button
+                amount={3499} // cents
+                currency="USD"
+                stripeKey="pk_live_oZtsGfDBpdVEr6OyyEAZtv9a"
+                // locale="en"
+                email="kevin@funguana.com"
+                // Note: Enabling either address option will give the user the ability to
+                // fill out both. Addresses are sent as a second parameter in the token callback.
+                // shippingAddress
+                // billingAddress={false}
+                // Note: enabling both zipCode checks and billing or shipping address will
+                // cause zipCheck to be pulled from billing address (set to shipping if none provided).
+                zipCode={false}
+                alipay // accept Alipay (default false)
+                bitcoin // accept Bitcoins (default false)
+                allowRememberMe // "Remember Me" option (default true)
+                token={this.onToken} // submit callback
+                reconfigureOnUpdate={false}
+                triggerEvent="onClick"
+              
+              >
+              <Card.Grid style={gridStyle}>
+                <h4>Deal Name</h4>
+                <h1>$34.99</h1>
+                <p>Reason 1</p>
+                <p>Reason 2</p>
+                <p>Reason 3</p>
+              </Card.Grid>
+            </StripeCheckout>
           </Card>,
 
 
@@ -405,13 +499,14 @@ export default class Analysis extends Component {
           className={styles.offlineCard}
           bordered={false}
           title="Referrals Over Time"
-          bodyStyle={{ padding: '0 0 32px 0' , height: "40vh" }}
+          bodyStyle={{ padding: '0 0 32px 0' , height: "27rem" }}
           style={{ marginTop: 32}}
           
         >
             <ResponsiveContainer>
-              <LineChart 
-                data={currentData}
+
+              <AreaChart 
+                data={this.state.referralByDate}
                 margin={{top: 5, right: 30, left: 20, bottom: 5}}
               >
                 <XAxis dataKey="name" />
@@ -419,19 +514,19 @@ export default class Analysis extends Component {
                 <CartesianGrid strokeDasharray="3 3"/>
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="referrals" stroke="#8884d8" activeDot={{r: 8}}/>
+                <Area type="monotone" dataKey="referrals" stroke="#8884d8" activeDot={{r: 8}}/>
       
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           
         </Card>
         <Row gutter={24}>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card
-              bodyStyle={{ padding: 0, minHeight: "50vh", height: "50vh" }}
+              bodyStyle={{ padding: 0, minHeight: "30rem" }}
               bordered={false}
               className={styles.activeCard}
-              title="List of users"
+              title="Your Referrals"
               loading={activitiesLoading}
               style={{ marginTop: 32, marginBottom: 32}}
             >
@@ -442,28 +537,50 @@ export default class Analysis extends Component {
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card
-              bodyStyle={{ padding: 0 , minHeight: "50vh", height: "50vh"}}
+              bodyStyle={{ padding: 20 , height: "30rem"}}
               bordered={false}
               className={styles.activeCard}
               title="Where your referrals are coming from"
               loading={activitiesLoading}
               style={{ marginTop: 32, marginBottom: 32}}
-            >
-              <ResponsiveContainer>
-                <PieChart>
-                  <Pie 
-                    isAnimationActive={false} 
-                    data={this.state.degreeCountList} 
-                    outerRadius="60%" 
-                    fill="#8884d8" label >
-                    {data01.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={dataColors[Math.floor(Math.random()*dataColors.length)]} />
-                    ))}
 
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+            > 
+              <Col xl={6} lg={6} md={6} sm={6} xs={6} style={{textAlign:"center"}}>
+                <h4>Total</h4>
+                <p>{this.state.totalCount}</p>
+              </Col>
+              <Col xl={6} lg={6} md={6} sm={6} xs={6} style={{textAlign:"center"}}>
+                <h4>1st</h4>
+                <p>{this.state.first}</p>
+              </Col>
+              <Col xl={6} lg={6} md={6} sm={6} xs={6} style={{textAlign:"center"}}>
+                <h4>2nd</h4>
+                <p>{this.state.second}</p>
+              </Col>
+              <Col xl={6} lg={6} md={6} sm={6} xs={6} style={{textAlign:"center"}}>
+                <h4>3rd</h4>
+                <p>{this.state.thrid}</p>
+              </Col>
+              
+              <Divider>Chart</Divider>
+              <div style={{height:"80%"}}>
+                <ResponsiveContainer>
+                  <PieChart>
+                    <Pie 
+                      isAnimationActive={false} 
+                      data={this.state.degreeCountList} 
+                      outerRadius="60%"
+                      fill="#8884d8" label >
+                      {data01.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={dataColors[Math.floor(Math.random()*dataColors.length)]} />
+                      ))}
+
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              
               {/* 
                 
               */}
@@ -492,7 +609,13 @@ export default class Analysis extends Component {
 										<Card title={item.title}>
 											Card content
 											<Divider>Progress</Divider>
-											<p>By just ... you'll have ...</p>
+											<Col xl={16} lg={16} md={16} sm={16} xs={16}>
+												Nulla fugiat mollit fugiat aliqua dolore Lorem proident duis et amet ad nostrud.
+											</Col>
+											<Col xl={6} lg={6} md={6} sm={6} xs={6}>
+												Incididunt proident tempor aliquip enim dolor cupidatat velit dolor esse do incididunt non.
+											</Col>
+											{/* <p>By just ... you'll have ...</p> */}
 										</Card>
 									</List.Item>
 								)}
