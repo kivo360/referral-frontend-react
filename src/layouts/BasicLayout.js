@@ -240,7 +240,7 @@ class BasicLayout extends React.PureComponent {
               notices={notices}
               collapsed={collapsed}
               isMobile={mb}
-              style={{background:'green' }}
+              style={{background:'#2aaf3c' }}
               onNoticeClear={this.handleNoticeClear}
               onCollapse={this.handleMenuCollapse}
               onMenuClick={this.handleMenuClick}

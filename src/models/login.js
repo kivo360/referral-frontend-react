@@ -3,7 +3,7 @@ import { stringify } from 'qs';
 import { fakeAccountLogin } from '../services/api';
 import { loginUser } from '../services/user';
 import { setAuthority } from '../utils/authority';
-import { setUserEmail } from '../utils/userinfo';
+import { setUserEmail, logoutUser } from '../utils/userinfo';
 import { reloadAuthorized } from '../utils/Authorized';
 import { getPageQuery } from '../utils/utils';
 
@@ -98,6 +98,7 @@ export default {
         },
       });
       reloadAuthorized();
+      logoutUser();
       // Push the user to the login page
       yield put(
         routerRedux.push({

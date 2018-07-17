@@ -10,14 +10,15 @@ import {
   List,
 	Modal,
 	Progress,
-	Divider
+  Divider,
+  Alert,
 } from 'antd';
 import { routerRedux } from 'dva/router';
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area} from 'recharts';
-
+import Introductions from './InstructionStep/Introduction';
 
 import { getTimeDistance, convertDateTime, occurrence } from '../../utils/utils';
-import { getUserEmail } from '../../utils/userinfo';
+import { getUserEmail, getUserPaymentInfo } from '../../utils/userinfo';
 
 
 import styles from './Analysis.less';
@@ -53,12 +54,13 @@ export default class Analysis extends Component {
       currentTabKey: '',
       visible: true,
       prepay: true,
+      prizes: [],
 			referralByDate: [],
       rangePickerValue: getTimeDistance('year'),
     };
 
 
-
+    console.log(getUserPaymentInfo());
 
 
     const { dispatch } = this.props;
@@ -94,12 +96,48 @@ export default class Analysis extends Component {
     
   // };
 
-  componentWillReceiveProps(nextProps){
+  async componentWillReceiveProps(nextProps){
     // console.log(nextProps);
     const { user } = nextProps;
     if(user){
-      this.setReferralStates(user);
+      const referralCounts = await this.setReferralStates(user);
+      this.setPrizeOptions(user, referralCounts);
     }
+    
+  }
+
+  setPrizeOptions(prizes, refCounts) {
+    const { currentUser } = prizes;
+    const { options } = currentUser;
+    
+    const prizeList = [];
+
+
+    options.first.forEach((prize) => {
+      let overPrize = false;
+      if (refCounts.r1 >= prize.number ) {
+        overPrize=true;
+      }
+      prizeList.push({degree: "1st", over:overPrize, ...prize});
+    });
+    options.second.forEach((prize) => {
+      let overPrize = false;
+      if (refCounts.r2 >= prize.number ) {
+        overPrize=true;
+      }
+      // prizeList.push({degree: "1st", over:overPrize, ...prize});
+      prizeList.push({degree: "2nd", over:overPrize,...prize});
+    });
+    options.third.forEach((prize) => {
+      let overPrize = false;
+      if (refCounts.r2 >= prize.number ) {
+        overPrize=true;
+      }
+      prizeList.push({degree: "3rd", over:overPrize, ...prize});
+    });
+    
+    // console.log(prizeList);
+    this.setState({prizes: prizeList})
   }
 
 	setReferralByDateInState(occuranceObject){
@@ -194,8 +232,13 @@ export default class Analysis extends Component {
 					{name: '3rd Degree', value: referred.l3.count},
 				],
       });
+      return {
+        r1: referred.l1.count,
+        r2: referred.l2.count,
+        r3: referred.l3.count,
+      }
     }
-
+    
   }
 
   handleTabChange = key => {
@@ -236,6 +279,11 @@ export default class Analysis extends Component {
     })
   }
 
+  openPayment = () => {
+    this.setState({
+      visible: true,
+    });
+  }
 
   isActive(type) {
     const { rangePickerValue } = this.state;
@@ -251,7 +299,7 @@ export default class Analysis extends Component {
     }
   }
 
-
+  
 	
   
   // collectUserInformation (){
@@ -342,6 +390,26 @@ export default class Analysis extends Component {
       cursor: 'pointer',
       minHeight: '25vh',
     };
+    const benefitStyle = {
+      width: '33%',
+      textAlign: 'center',
+      // cursor: 'pointer',
+      minHeight: '10vh',
+    };
+
+    const benefitStyleSuccess = {
+      width: '33%',
+      textAlign: 'center',
+      // backgroundColor: '#2aaf3c',
+      // color: 'white',
+      // cursor: 'pointer',
+      borderBottom: "5px solid #2aaf3c",
+      minHeight: '10vh',
+    };
+
+    const colorWhite = {
+      color : 'white',
+    }
 
 
     const listStyle = {
@@ -356,142 +424,23 @@ export default class Analysis extends Component {
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
-            width="50%"
+            width="60%"
+            maskClosable={false}
+            footer={null}
           >	
-            <h2>Keep Track Of Your Referrals</h2>
-            <Divider />
-            <p>Here you can:</p>
-						<ol>
-							<li>Get your referral code</li>
-							<li>Check on your referral stats</li>
-							<li>See if you achieved prizes</li>
-						</ol>
-						
-						<h2>How prizes work</h2>
-						<p>You can get prizes for getting people to enter their email in this prelaunch program.</p>
-						<p>The prizes work in multiple levels:</p>
-						<ol>
-							<li>Friends you recommend (1st Tier)</li>
-							<li>Friends of your friends (2nd Tier)</li>
-							<li>Friends of your friend's friends (3rd Tier)</li>
-						</ol>
-						<p>Check out the prizes at the bottom of the page. It will include the list of prizes (weighed towards 3rd tier), and the prizes you've won so far</p>
-						<h4>Buy your first month in advance. That way you'll have extra benefits like discounts.</h4>
+            <Introductions close={this.handleCancel} />
           </Modal>
 
           {/* Show if the user hasn't purchased anything yet or if the user hasn't disabled it */}
-					<Card 
-						title="Check Out These Prelaunch Deals"
-						extra={<a href="#">I Don't Want The Benefit</a>}
-					> 
-              <StripeCheckout
-                name="Funguana" // the pop-in header title
-                description="Prebook your bot" // the pop-in header subtitle
-                image="https://funguana.com/wp-content/uploads/2018/03/logo.png" // the pop-in header image (default none)
-                ComponentClass="div"
-                panelLabel="Pay" // prepended to the amount in the bottom pay button
-                amount={2499} // cents
-                currency="USD"
-                stripeKey="pk_live_oZtsGfDBpdVEr6OyyEAZtv9a"
-                // locale="en"
-                email="kevin@funguana.com"
-                // Note: Enabling either address option will give the user the ability to
-                // fill out both. Addresses are sent as a second parameter in the token callback.
-                // shippingAddress
-                // billingAddress={false}
-                // Note: enabling both zipCode checks and billing or shipping address will
-                // cause zipCheck to be pulled from billing address (set to shipping if none provided).
-                zipCode={false}
-                alipay // accept Alipay (default false)
-                bitcoin // accept Bitcoins (default false)
-                allowRememberMe // "Remember Me" option (default true)
-                token={this.onToken} // submit callback
-                reconfigureOnUpdate={false}
-                triggerEvent="onClick"
-              
-              >
-              
-                <Card.Grid style={gridStyle}>
-                  <h4>Deal Name</h4>
-                  <h1>$24.99</h1>
-                  <p>Reason 1</p>
-                  <p>Reason 2</p>
-                  <p>Reason 3</p>
+          <Alert 
+            message="Buy Early Access" 
+            description="You can buy both early access and a lifetime discount if you buy your first month early" 
+            type="success" 
+            closeText="I'm in!" 
+            showIcon 
+            afterClose={this.openPayment}
+          />
 
-                </Card.Grid>
-              </StripeCheckout>
-              <StripeCheckout
-                name="Funguana" // the pop-in header title
-                description="Prebook your bot" // the pop-in header subtitle
-                image="https://funguana.com/wp-content/uploads/2018/03/logo.png" // the pop-in header image (default none)
-                ComponentClass="div"
-                panelLabel="Pay" // prepended to the amount in the bottom pay button
-                amount={2999} // cents
-                currency="USD"
-                stripeKey="pk_live_oZtsGfDBpdVEr6OyyEAZtv9a"
-                // locale="en"
-                email="kevin@funguana.com"
-                // Note: Enabling either address option will give the user the ability to
-                // fill out both. Addresses are sent as a second parameter in the token callback.
-                // shippingAddress
-                // billingAddress={false}
-                // Note: enabling both zipCode checks and billing or shipping address will
-                // cause zipCheck to be pulled from billing address (set to shipping if none provided).
-                zipCode={false}
-                alipay // accept Alipay (default false)
-                bitcoin // accept Bitcoins (default false)
-                allowRememberMe // "Remember Me" option (default true)
-                token={this.onToken} // submit callback
-                reconfigureOnUpdate={false}
-                triggerEvent="onClick"
-              
-              >
-              <Card.Grid style={gridStyle}>
-                <h4>Deal Name</h4>
-                <h1>$29.99</h1>
-                <p>Reason 1</p>
-                <p>Reason 2</p>
-                <p>Reason 3</p>
-
-              </Card.Grid>
-            </StripeCheckout>
-
-
-            <StripeCheckout
-                name="Funguana" // the pop-in header title
-                description="Prebook your bot" // the pop-in header subtitle
-                image="https://funguana.com/wp-content/uploads/2018/03/logo.png" // the pop-in header image (default none)
-                ComponentClass="div"
-                panelLabel="Pay" // prepended to the amount in the bottom pay button
-                amount={3499} // cents
-                currency="USD"
-                stripeKey="pk_live_oZtsGfDBpdVEr6OyyEAZtv9a"
-                // locale="en"
-                email="kevin@funguana.com"
-                // Note: Enabling either address option will give the user the ability to
-                // fill out both. Addresses are sent as a second parameter in the token callback.
-                // shippingAddress
-                // billingAddress={false}
-                // Note: enabling both zipCode checks and billing or shipping address will
-                // cause zipCheck to be pulled from billing address (set to shipping if none provided).
-                zipCode={false}
-                alipay // accept Alipay (default false)
-                bitcoin // accept Bitcoins (default false)
-                allowRememberMe // "Remember Me" option (default true)
-                token={this.onToken} // submit callback
-                reconfigureOnUpdate={false}
-                triggerEvent="onClick"
-              
-              >
-              <Card.Grid style={gridStyle}>
-                <h4>Deal Name</h4>
-                <h1>$34.99</h1>
-                <p>Reason 1</p>
-                <p>Reason 2</p>
-                <p>Reason 3</p>
-              </Card.Grid>
-            </StripeCheckout>
-          </Card>,
 
 
         <Card
@@ -603,21 +552,28 @@ export default class Analysis extends Component {
             >
               <List
 								grid={{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 3, xl: 3, xxl: 2 }}
-								dataSource={data}
+								dataSource={this.state.prizes}
 								renderItem={item => (
-									<List.Item>
-										<Card title={item.title}>
-											Card content
-											<Divider>Progress</Divider>
-											<Col xl={16} lg={16} md={16} sm={16} xs={16}>
-												Nulla fugiat mollit fugiat aliqua dolore Lorem proident duis et amet ad nostrud.
-											</Col>
-											<Col xl={6} lg={6} md={6} sm={6} xs={6}>
-												Incididunt proident tempor aliquip enim dolor cupidatat velit dolor esse do incididunt non.
-											</Col>
-											{/* <p>By just ... you'll have ...</p> */}
-										</Card>
-									</List.Item>
+                  <div>
+                    {item.over ? (
+                    <Card.Grid style={benefitStyleSuccess}>
+                      <h5 style={{textAlign:"center"}}>{item.degree} Level</h5>
+                      <h2 style={{textAlign:"center"}} >{item.number} People Referred</h2>
+                      <p style={{textAlign:"center"}}>{item.description}</p>
+                      <h3 style={{textAlign:"center"}}>Progress So Far: {(item.number)}%</h3>
+                    </Card.Grid>
+                    ): (
+                      <Card.Grid style={benefitStyle}>
+                        <h5>{item.degree} Level</h5>
+                        <h2 style={{textAlign:"center"}} >{item.number} People Referred</h2>
+                        <p>{item.description}</p>
+                        <h3>Progress So Far: {(item.number)}%</h3>
+                      </Card.Grid>
+                    )
+
+                    }
+                    
+                  </div>
 								)}
 							/>
 							
