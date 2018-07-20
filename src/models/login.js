@@ -19,11 +19,6 @@ export default {
   effects: {
     *loginNew({ payload }, { call, put }){
       const response = yield call(loginUser, payload);
-      // console.log(response);
-      // yield put({
-      //   type: 'printStuff',
-      //   payload: response,
-      // })
       yield put({
         type: 'defaultLoginStatus',
         payload: {
@@ -48,7 +43,7 @@ export default {
             return;
           }
         }
-        yield put(routerRedux.push('/dashboard/analysis'));
+        yield put( routerRedux.push('/dashboard/analysis') );
       }
     },
     

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { routerRedux, Link } from 'dva/router';
 import { Form, Input, Button, Select, Row, Col, Popover, Progress } from 'antd';
+import YouTube from 'react-youtube';
 import styles from './Register.less';
 
 const FormItem = Form.Item;
@@ -64,6 +65,11 @@ export default class Register extends Component {
       }
     }, 1000);
   };
+
+  _onReady(event) {
+    // access to player in all event handlers via event.target
+    event.target.playVideo();
+  }
 
   getPasswordStatus = () => {
     const { form } = this.props;
@@ -165,102 +171,127 @@ export default class Register extends Component {
     const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
     const { count, prefix, help, visible } = this.state;
-    return (
-      <div className={styles.main}>
-        <h3>Refer Yourself</h3>
-        <Form onSubmit={this.handleSubmit}>
-          
-          <FormItem>
-            {getFieldDecorator('first', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please enter your first name!',
-                },
-              ],
-            })(<Input size="large" placeholder="First Name" />)}
-          </FormItem>
-          <FormItem>
-            {getFieldDecorator('last', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please enter your last name!',
-                },
-              ],
-            })(<Input size="large" placeholder="Last Name" />)}
-          </FormItem>
-          
-          <FormItem>
-            {getFieldDecorator('email', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please input the email address!',
-                },
-                {
-                  type: 'email',
-                  message: 'The email address is in the wrong format!',
-                },
-              ],
-            })(<Input size="large" placeholder="Email" />)}
-          </FormItem>
-          
 
-          <FormItem help={help}>
-            <Popover
-              content={
-                <div style={{ padding: '4px 0' }}>
-                  {passwordStatusMap[this.getPasswordStatus()]}
-                  {this.renderPasswordProgress()}
-                  <div style={{ marginTop: 10 }}>
-                    Please enter at least 6 characters. Please do not use passwords that are easy to guess.
-                  </div>
-                </div>
-              }
-              overlayStyle={{ width: 240 }}
-              placement="right"
-              visible={visible}
-            >
-              {getFieldDecorator('password', {
+    const opts = {
+      height: '300',
+      width: '500',
+      playerVars: { // https://developers.google.com/youtube/player_parameters
+        autoplay: 1
+      }
+    };
+    return (
+      <div>
+
+        <div
+          style={{width:'500px', margin: 'auto'}}
+        >
+          <YouTube 
+            videoId="2g811Eo7K8U"
+            opts={opts}
+            onReady={this._onReady}
+          />
+        </div>
+          
+        
+
+        <div className={styles.main}>
+          <h3 style={{textAlign:'center'}}>Refer Yourself</h3>
+          
+          <Form onSubmit={this.handleSubmit}>
+            
+            <FormItem>
+              {getFieldDecorator('first', {
                 rules: [
                   {
-                    validator: this.checkPassword,
+                    required: true,
+                    message: 'Please enter your first name!',
                   },
                 ],
-              })(<Input size="large" type="password" placeholder="Enter Password" />)}
-            </Popover>
-          </FormItem>
-          <FormItem>
-            {getFieldDecorator('confirm', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please confirm your password!',
-                },
-                {
-                  validator: this.checkConfirm,
-                },
-              ],
-            })(<Input size="large" type="password" placeholder="Confirm Password" />)}
-          </FormItem>
-          
-          <FormItem>
-            <Button
-              size="large"
-              loading={submitting}
-              className={styles.submit}
-              type="primary"
-              htmlType="submit"
-            >
-              Register
-            </Button>
-            <Link className={styles.login} to="/user/login">
-              Sign in with an existing account
-            </Link>
-          </FormItem>
-        </Form>
+              })(<Input size="large" placeholder="First Name" />)}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('last', {
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please enter your last name!',
+                  },
+                ],
+              })(<Input size="large" placeholder="Last Name" />)}
+            </FormItem>
+            
+            <FormItem>
+              {getFieldDecorator('email', {
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please input the email address!',
+                  },
+                  {
+                    type: 'email',
+                    message: 'The email address is in the wrong format!',
+                  },
+                ],
+              })(<Input size="large" placeholder="Email" />)}
+            </FormItem>
+            
+
+            <FormItem help={help}>
+              <Popover
+                content={
+                  <div style={{ padding: '4px 0' }}>
+                    {passwordStatusMap[this.getPasswordStatus()]}
+                    {this.renderPasswordProgress()}
+                    <div style={{ marginTop: 10 }}>
+                      Please enter at least 6 characters. Please do not use passwords that are easy to guess.
+                    </div>
+                  </div>
+                }
+                overlayStyle={{ width: 240 }}
+                placement="right"
+                visible={visible}
+              >
+                {getFieldDecorator('password', {
+                  rules: [
+                    {
+                      validator: this.checkPassword,
+                    },
+                  ],
+                })(<Input size="large" type="password" placeholder="Enter Password" />)}
+              </Popover>
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('confirm', {
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please confirm your password!',
+                  },
+                  {
+                    validator: this.checkConfirm,
+                  },
+                ],
+              })(<Input size="large" type="password" placeholder="Confirm Password" />)}
+            </FormItem>
+            
+            <FormItem>
+              <Button
+                size="large"
+                loading={submitting}
+                className={styles.submit}
+                type="primary"
+                htmlType="submit"
+              >
+                Register
+              </Button>
+              <Link className={styles.login} to="/user/login">
+                Sign in with an existing account
+              </Link>
+            </FormItem>
+          </Form>
+        </div>
       </div>
+      
     );
   }
 }
