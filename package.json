@@ -38,6 +38,7 @@
     "omit.js": "^1.0.0",
     "path-to-regexp": "^2.1.0",
     "prop-types": "^15.5.10",
+    "public-ip": "^2.4.0",
     "qs": "^6.5.0",
     "rc-drawer": "^1.2.0",
     "react": "^16.4.1",

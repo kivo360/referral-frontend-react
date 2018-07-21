@@ -147,6 +147,9 @@ export async function loginUser(params){
 
 // Register here
 export async function registerUser(params){
+
+  // publicIp
+
   return instance.post('/user/register', params)
           .then(checkStatus)
           .then(response => {

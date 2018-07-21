@@ -4,6 +4,7 @@ import { setAuthority } from '../utils/authority';
 import { setUserEmail } from '../utils/userinfo';
 import { reloadAuthorized } from '../utils/Authorized';
 import { getPageQuery } from '../utils/utils';
+const publicIp = require('public-ip');
 
 
 export default {
@@ -18,7 +19,10 @@ export default {
     *submit({ payload }, { call, put }) {
       const params = getPageQuery();
       const { ref } = params;
-
+      publicIp.v4().then(ip => {
+        console.log(ip);
+      });
+      
       const response = yield call(registerUser, {
         referrer: ref,
         ...payload,

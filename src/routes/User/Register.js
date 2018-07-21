@@ -195,7 +195,7 @@ export default class Register extends Component {
         
 
         <div className={styles.main}>
-          <h3 style={{textAlign:'center'}}>Refer Yourself</h3>
+          <h3 style={{textAlign:'center'}}>Prelaunch Registration</h3>
           
           <Form onSubmit={this.handleSubmit}>
             

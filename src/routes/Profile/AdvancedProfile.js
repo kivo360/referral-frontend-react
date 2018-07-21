@@ -334,7 +334,7 @@ export default class AdvancedProfile extends Component {
         <Card title="用户近半年来电记录" style={{ marginBottom: 24 }} bordered={false}>
           <div className={styles.noData}>
             <Icon type="frown-o" />
-            暂无数据
+            Something Goes Here
           </div>
         </Card>
         <Card

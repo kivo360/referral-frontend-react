@@ -7,6 +7,7 @@ import { setUserEmail, logoutUser } from '../utils/userinfo';
 import { reloadAuthorized } from '../utils/Authorized';
 import { getPageQuery } from '../utils/utils';
 
+
 export default {
   namespace: 'login',
 
@@ -94,6 +95,7 @@ export default {
       });
       reloadAuthorized();
       logoutUser();
+      
       // Push the user to the login page
       yield put(
         routerRedux.push({

@@ -15,7 +15,9 @@ import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
-import logo from '../assets/logo.svg';
+
+import logo from '../assets/funguana_only_plain_white.svg';
+
 import { getUserEmail } from '../utils/userinfo';
 
 
@@ -240,7 +242,7 @@ class BasicLayout extends React.PureComponent {
               notices={notices}
               collapsed={collapsed}
               isMobile={mb}
-              style={{background:'#2aaf3c' }}
+              style={{ background: '#2aaf3c' }}
               onNoticeClear={this.handleNoticeClear}
               onCollapse={this.handleMenuCollapse}
               onMenuClick={this.handleMenuClick}

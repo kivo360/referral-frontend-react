@@ -452,21 +452,26 @@ export default class Analysis extends Component {
           style={{ marginTop: 32}}
           
         >
+          {(this.state.referralByDate.length) >0 ? (
             <ResponsiveContainer>
 
-              <AreaChart 
-                data={this.state.referralByDate}
-                margin={{top: 5, right: 30, left: 20, bottom: 5}}
-              >
-                <XAxis dataKey="name" />
-                <YAxis />
-                <CartesianGrid strokeDasharray="3 3"/>
-                <Tooltip />
-                <Legend />
-                <Area type="monotone" dataKey="referrals" stroke="#8884d8" activeDot={{r: 8}}/>
-      
-              </AreaChart>
-            </ResponsiveContainer>
+            <AreaChart 
+              data={this.state.referralByDate}
+              margin={{top: 5, right: 30, left: 20, bottom: 5}}
+            >
+              <XAxis dataKey="name" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3"/>
+              <Tooltip />
+              <Legend />
+              <Area type="monotone" dataKey="referrals" stroke="#8884d8" activeDot={{r: 8}}/>
+    
+            </AreaChart>
+          </ResponsiveContainer>
+          ): (
+            <p style={{textAlign:'center', padding: '8rem'}}> No Data</p>
+          )}
+            
           
         </Card>
         <Row gutter={24}>
@@ -515,7 +520,7 @@ export default class Analysis extends Component {
               <div style={{height:"80%"}}>
                 <ResponsiveContainer>
                   <PieChart>
-                    <Pie 
+                    <Pie
                       isAnimationActive={false} 
                       data={this.state.degreeCountList} 
                       outerRadius="60%"
@@ -523,19 +528,11 @@ export default class Analysis extends Component {
                       {data01.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={dataColors[Math.floor(Math.random()*dataColors.length)]} />
                       ))}
-
                     </Pie>
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              
-              {/* 
-                
-              */}
-              {/* <List loading={activitiesLoading} size="large">
-                <div className={styles2.activitiesList}>{this.renderActivities()}</div>
-              </List> */}
             </Card>
           </Col>
         </Row>
@@ -556,20 +553,20 @@ export default class Analysis extends Component {
 								renderItem={item => (
                   <div>
                     {item.over ? (
-                    <Card.Grid style={benefitStyleSuccess}>
-                      <h5 style={{textAlign:"center"}}>{item.degree} Level</h5>
-                      <h2 style={{textAlign:"center"}} >{item.number} People Referred</h2>
-                      <p style={{textAlign:"center"}}>{item.description}</p>
-                      <h3 style={{textAlign:"center"}}>Progress So Far: {(item.number)}%</h3>
-                    </Card.Grid>
-                    ): (
-                      <Card.Grid style={benefitStyle}>
-                        <h5>{item.degree} Level</h5>
+                      <Card.Grid style={benefitStyleSuccess}>
+                        <h5 style={{textAlign:"center"}}>{item.degree} Level</h5>
                         <h2 style={{textAlign:"center"}} >{item.number} People Referred</h2>
-                        <p>{item.description}</p>
-                        <h3>Progress So Far: {(item.number)}%</h3>
+                        <p style={{textAlign:"center"}}>{item.description}</p>
+                        <h3 style={{textAlign:"center"}}>Progress So Far: {(item.number)}%</h3>
                       </Card.Grid>
-                    )
+                      ): (
+                        <Card.Grid style={benefitStyle}>
+                          <h5>{item.degree} Level</h5>
+                          <h2 style={{textAlign:"center"}} >{item.number} People Referred</h2>
+                          <p>{item.description}</p>
+                          <h3>Progress So Far: {(item.number)}%</h3>
+                        </Card.Grid>
+                      )
 
                     }
                     
