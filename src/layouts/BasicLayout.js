@@ -142,7 +142,7 @@ class BasicLayout extends React.PureComponent {
       }
     });
     if (currRouterData && currRouterData.name) {
-      title = `Prelaunch Referral - Funguana, Inc`;
+      title = `Prelaunch Invite - Funguana, Inc`;
     }
     return title;
   }
@@ -221,31 +221,19 @@ class BasicLayout extends React.PureComponent {
     const bashRedirect = this.getBaseRedirect();
     const layout = (
       <Layout>
-        {/* <SiderMenu
-          logo={logo}
-          // 不带Authorized参数的情况下如果没有权限,会强制跳到403界面
-          // If you do not have the Authorized parameter
-          // you will be forced to jump to the 403 interface without permission
-          Authorized={Authorized}
-          menuData={getMenuData()}
-          collapsed={collapsed}
-          location={location}
-          isMobile={mb}
-          onCollapse={this.handleMenuCollapse}
-        /> */}
         <Layout>
           <Header style={{ padding: 0}}>
             <GlobalHeader
               logo={logo}
-              currentUser={currentUser}
+              currentUser={ currentUser }
               fetchingNotices={fetchingNotices}
               notices={notices}
               collapsed={collapsed}
               isMobile={mb}
               style={{ background: '#2aaf3c' }}
-              onNoticeClear={this.handleNoticeClear}
-              onCollapse={this.handleMenuCollapse}
-              onMenuClick={this.handleMenuClick}
+              onNoticeClear={ this.handleNoticeClear }
+              onCollapse={ this.handleMenuCollapse }
+              onMenuClick={ this.handleMenuClick }
               onNoticeVisibleChange={this.handleNoticeVisibleChange}
             />
           </Header>
@@ -278,7 +266,7 @@ class BasicLayout extends React.PureComponent {
                   blankTarget: true,
                 },
                 {
-                  key: 'github',
+                  key: 'Github',
                   title: <Icon type="github" />,
                   href: 'https://github.com/funguana',
                   blankTarget: true,

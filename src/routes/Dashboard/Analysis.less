@@ -13,6 +13,45 @@
   }
 }
 
+
+// This is the grid design to use
+.prizeGrid{
+  width: 33%;
+  text-align: center;
+  min-height: 20vh;
+  border-bottom: 5px solid rgba(42, 175, 60, 0);
+  &:hover {
+    // color: ;
+    border-bottom: 5px solid rgba(42, 175, 60, 0.37);
+  }
+  @media screen and (max-width: @screen-sm) {
+    width: 50%;
+    min-height: 50vh;
+  }
+
+  @media screen and (max-width: @screen-md) {
+    width: 50%;
+    min-height: 30vh;
+  }
+}
+
+
+.prepurchaseGrid{
+  width: 100%;
+  text-align: center;
+  min-height: 23rem;
+  // margin: 
+  border-bottom: 0.4rem solid rgba(204, 177, 25, 0.37);
+  border-top: 0.4rem solid rgba(204, 177, 25, 0.37);
+  &:hover {
+    // color: ;
+    border-top: 0.4rem solid rgba(204, 177, 25, 0.795);
+    border-bottom: 0.4rem solid rgba(204, 177, 25, 0.795);
+  }
+}
+
+
+
 .recharts-wrapper {
   margin : 0 auto;
 }

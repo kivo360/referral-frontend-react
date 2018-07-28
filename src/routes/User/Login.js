@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
+import { Link, routerRedux } from 'dva/router';
 import { Checkbox, Alert, Icon } from 'antd';
 import Login from 'components/Login';
 import styles from './Login.less';
+import { getUserEmail, getUserPaymentInfo, getUserModal, setUserModal, setUserPaymentInfo } from '../../utils/userinfo';
 
 const { Tab, UserName, Password, Submit } = Login;
 
@@ -17,10 +18,25 @@ const { Tab, UserName, Password, Submit } = Login;
   submittingNew: loading.effects['login/loginNew'],
 }))
 export default class LoginPage extends Component {
-  state = {
-    type: 'account',
-    autoLogin: true,
-  };
+
+  constructor(props){
+    super(props);
+
+
+    this.state = {
+      type: 'account',
+      autoLogin: true,
+    };
+
+    const { dispatch } = this.props;
+
+    const userEmail = getUserEmail();
+    if (userEmail !== undefined){ 
+        dispatch(routerRedux.push('/dashboard/analysis'))
+    }
+  }
+
+  
 
   onTabChange = type => {
     this.setState({ type });
@@ -29,6 +45,7 @@ export default class LoginPage extends Component {
   handleSubmit = (err, values) => {
     const { type } = this.state;
     const { dispatch } = this.props;
+    // console.log(e)
     if (!err) {
       dispatch({
         type: 'login/loginNew',
@@ -46,6 +63,7 @@ export default class LoginPage extends Component {
     });
   };
 
+  
   renderMessage = content => {
     return <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />;
   };
@@ -67,14 +85,17 @@ export default class LoginPage extends Component {
             <Password name="password" placeholder="Password" />
           </Tab>
           {/* Check if the user is logged in */}
-          <div>
+          {/* <div>
             <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
               Remember Me
             </Checkbox>
             <a style={{ float: 'right' }} href="">
               Forget Password
             </a>
-          </div>
+          </div> */}
+          <Link className={styles.login} to="/user/register">
+            Haven't Sighed Up Yet? Sign up here
+          </Link>
           <Submit loading={submitting}>Login</Submit>
         </Login>
       </div>

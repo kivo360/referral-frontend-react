@@ -12,6 +12,7 @@ export default {
 
   state: {
     status: undefined,
+    submitting: false,
   },
 
   effects: {
@@ -19,25 +20,47 @@ export default {
     *submit({ payload }, { call, put }) {
       const params = getPageQuery();
       const { ref } = params;
-      publicIp.v4().then(ip => {
-        console.log(ip);
-      });
-      
+      console.log("Ticking 2.5");
+      const IP = yield publicIp.v4();
+      // console.log(IP);
+      console.log("Ticking 3");
       const response = yield call(registerUser, {
         referrer: ref,
+        ip: IP,
         ...payload,
       });
-      console.log(response);
-      if (response.status === 200 || response.status === 202) {
+      // console.log(response);
+      try {
+        if (response.status === 200 || response.status === 202) {
+          console.log("Ticking 4");
+          yield put({
+            type: 'registerHandle',
+            payload: {status: 'ok'},
+          });
+  
+          setUserEmail(response.data.email);
+          yield put(routerRedux.push('/dashboard/analysis'));
+          return;
+        }
+        else{
+          console.log("Ticking 5");
+          yield put({
+            type: 'registerHandle',
+            payload: {status: 'error'},
+          });
+          return;
+        }
+        return;
+      } catch (error) {
         yield put({
           type: 'registerHandle',
-          payload: response,
+          payload: {status: 'error'},
         });
-
-        setUserEmail(response.data.email);
-        yield put(routerRedux.push('/dashboard/analysis'));
-        
+        // yield put(routerRedux.push('/user/register'));
       }
+      
+      
+      
       // console.log(params);
       // console.log(payload);
       // console.log(response);
@@ -46,9 +69,25 @@ export default {
   },
 
   reducers: {
+    registerSubmit(state, { payload }) {
+      //  = false;
+      if(payload.status === 'ok'){
+        setAuthority('user');
+        reloadAuthorized();
+      }
+      
+      return {
+        ...state,
+        status: payload.status,
+      };
+    },
     registerHandle(state, { payload }) {
-      setAuthority('user');
-      reloadAuthorized();
+      //  = false;
+      if(payload.status === 'ok'){
+        setAuthority('user');
+        reloadAuthorized();
+      }
+      
       return {
         ...state,
         status: payload.status,

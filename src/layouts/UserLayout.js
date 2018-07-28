@@ -35,7 +35,7 @@ const copyright = (
 function getLoginPathWithRedirectPath() {
   const params = getPageQuery();
   const { redirect } = params;
-  return getQueryPath('/user/login', {
+  return getQueryPath('/user/register', {
     redirect,
   });
 }
@@ -44,11 +44,11 @@ class UserLayout extends React.PureComponent {
   getPageTitle() {
     const { routerData, location } = this.props;
     const { pathname } = location;
-    let title = 'Ant Design Pro';
-    if (routerData[pathname] && routerData[pathname].name) {
-      title = `${routerData[pathname].name} - Ant Design Pro`;
-    }
-    return title;
+    // let title = 'Funguana';
+    // if (routerData[pathname] && routerData[pathname].name) {
+    //   title = `Funguana`;
+    // }
+    return 'Invite Program Funguana';
   }
 
   render() {
@@ -64,7 +64,7 @@ class UserLayout extends React.PureComponent {
                   <span className={styles.title}>Funguana, Inc</span>
                 </Link>
               </div>
-              <div className={styles.desc}>The prelaunch program</div>
+              <div className={styles.desc}>The Prelaunch Invite Program</div>
             </div>
             <Switch>
               {getRoutes(match.path, routerData).map(item => (

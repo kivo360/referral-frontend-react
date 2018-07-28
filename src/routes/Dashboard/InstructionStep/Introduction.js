@@ -3,10 +3,10 @@ import React, { PureComponent, Component } from 'react';
 
 import { Menu, Icon, Spin, Tag, Dropdown, Avatar, Divider, Tooltip, Steps, Button, message } from 'antd';
 import { Part1, Part2, Part3, Part4, Part5, Part6, Part7, Part8 } from './Part1';
+import styles from './Content.less';
 
 const Step = Steps.Step;
 
-import styles from './Content.less';
 
 
 
@@ -34,10 +34,10 @@ export default class Instructions extends PureComponent {
             title: 'Check Prizes',
             content: <Part6 />,
         },
-        {
-            title: 'Buy Your First Month Early',
-            content: <Part8 />,
-        },
+        // {
+        //     title: 'Buy Your First Month Early',
+        //     content: <Part8 />,
+        // },
         {
             title: 'Good Luck',
             content: <Part7 />,

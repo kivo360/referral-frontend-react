@@ -4,6 +4,8 @@ import { routerRedux, Link } from 'dva/router';
 import { Form, Input, Button, Select, Row, Col, Popover, Progress } from 'antd';
 import YouTube from 'react-youtube';
 import styles from './Register.less';
+// getUserPaymentInfo, getUserModal, setUserModal, setUserPaymentInfo
+import { getUserEmail } from '../../utils/userinfo';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -27,27 +29,39 @@ const passwordProgressMap = {
 }))
 @Form.create()
 export default class Register extends Component {
-  state = {
-    count: 0,
-    confirmDirty: false,
-    visible: false,
-    help: '',
-    prefix: '1',
-  };
+
+  constructor(props){
+    super(props);
+    this.state = {
+      count: 0,
+      confirmDirty: false,
+      visible: false,
+      help: '',
+      prefix: '1',
+    };
+
+
+    const { dispatch } = this.props;
+
+    const userEmail = getUserEmail();
+    if (userEmail !== undefined){ 
+        dispatch(routerRedux.push('/dashboard/analysis'))
+    }
+  }
 
   componentWillReceiveProps(nextProps) {
     const { form, dispatch } = this.props;
     const account = form.getFieldValue('mail');
-    if (nextProps.register.status === 'ok') {
-      dispatch(
-        routerRedux.push({
-          pathname: '/user/register-result',
-          state: {
-            account,
-          },
-        })
-      );
-    }
+    // if (nextProps.register.status === 'ok') {
+    //   dispatch(
+    //     routerRedux.push({
+    //       pathname: '/user/register-result',
+    //       state: {
+    //         account,
+    //       },
+    //     })
+    //   );
+    // }
   }
 
   componentWillUnmount() {
@@ -84,11 +98,15 @@ export default class Register extends Component {
   };
 
   handleSubmit = e => {
+    console.log(e)
     e.preventDefault();
     const { form, dispatch } = this.props;
     form.validateFields({ force: true }, (err, values) => {
       const { prefix } = this.state;
+      console.log("ticking 1")
       if (!err) {
+        console.log("ticking 2")
+        console.log(dispatch);
         dispatch({
           type: 'register/submit',
           payload: {
@@ -96,7 +114,11 @@ export default class Register extends Component {
             prefix,
           },
         });
+
+      }else{
+        // console.log(err);
       }
+      // e.preventDefault();
     });
   };
 
@@ -170,35 +192,35 @@ export default class Register extends Component {
   render() {
     const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
-    const { count, prefix, help, visible } = this.state;
+    const { help, visible } = this.state;
 
     const opts = {
-      height: '300',
-      width: '500',
+
       playerVars: { // https://developers.google.com/youtube/player_parameters
         autoplay: 1
-      }
+      },
     };
     return (
       <div>
-
+        
         <div
-          style={{width:'500px', margin: 'auto'}}
+          className={styles.youtubeContainerMain}
         >
+        <div className={styles.youtubeContainer} >
           <YouTube 
-            videoId="2g811Eo7K8U"
+            videoId="B4BSVYTEDrM"
             opts={opts}
+            // containerClassName={}
             onReady={this._onReady}
-          />
+          /></div>
         </div>
-          
+        
         
 
         <div className={styles.main}>
-          <h3 style={{textAlign:'center'}}>Prelaunch Registration</h3>
+          <h3 style={{textAlign:'center'}}>Prelaunch Registration. Enter Your Email.</h3>
           
           <Form onSubmit={this.handleSubmit}>
-            
             <FormItem>
               {getFieldDecorator('first', {
                 rules: [
@@ -289,6 +311,7 @@ export default class Register extends Component {
               </Link>
             </FormItem>
           </Form>
+          
         </div>
       </div>
       

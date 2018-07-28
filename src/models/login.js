@@ -15,37 +15,46 @@ export default {
     status: undefined,
     email: undefined,
     hash: undefined,
+    type: undefined,
   },
   
   effects: {
     *loginNew({ payload }, { call, put }){
       const response = yield call(loginUser, payload);
-      yield put({
-        type: 'defaultLoginStatus',
-        payload: {
-          currentAuthority: 'user',
-          ...response.data,
-        },
-      });
-      if(response.status === 200 || response.status === 202) {
-        reloadAuthorized();
-        const urlParams = new URL(window.location.href);
-        const params = getPageQuery();
-        let { redirect } = params;
-        if (redirect) {
-          const redirectUrlParams = new URL(redirect);
-          if (redirectUrlParams.origin === urlParams.origin) {
-            redirect = redirect.substr(urlParams.origin.length);
-            if (redirect.startsWith('/#')) {
-              redirect = redirect.substr(2);
+      try {
+        yield put({
+          type: 'defaultLoginStatus',
+          payload: {
+            currentAuthority: 'user',
+            type: 'account',
+            ...response.data,
+          },
+        });
+
+      
+        if(response.status === 200 || response.status === 202) {
+          reloadAuthorized();
+          const urlParams = new URL(window.location.href);
+          const params = getPageQuery();
+          let { redirect } = params;
+          if (redirect) {
+            const redirectUrlParams = new URL(redirect);
+            if (redirectUrlParams.origin === urlParams.origin) {
+              redirect = redirect.substr(urlParams.origin.length);
+              if (redirect.startsWith('/#')) {
+                redirect = redirect.substr(2);
+              }
+            } else {
+              window.location.href = redirect;
+              return;
             }
-          } else {
-            window.location.href = redirect;
-            return;
           }
+          yield put( routerRedux.push('/dashboard/analysis') );
         }
-        yield put( routerRedux.push('/dashboard/analysis') );
+      } catch (error) {
+        // yield put( routerRedux.push('/user/login') );
       }
+      
     },
     
     // Login 2 (payload, {call, put})
@@ -121,10 +130,14 @@ export default {
     defaultLoginStatus(state, { payload }) {
       setAuthority(payload.currentAuthority);
       setUserEmail(payload.email);
+      let statusCode = 'error';
+      if(payload.email){
+        statusCode = 'ok';
+      }
       return {
         ...state,
-        status: true,
-        // type: payload.type,
+        status: statusCode,
+        type: payload.type,
         email: payload.email,
         hash: payload.referral_hash,
       };

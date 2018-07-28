@@ -8,10 +8,19 @@ export default {
       extraBabelPlugins: ['dva-hmr'],
     },
   },
+  extraBabelIncludes: [
+    "node_modules/axios",
+    "node_modules/react-copy-to-clipboard",
+    "node_modules/recharts",
+    "node_modules/react-youtube",
+    "node_modules/react-stripe-checkout",
+    "node_modules/public-ip",
+    "node_modules/sprintf-js",
+  ],
   externals: {
     '@antv/data-set': 'DataSet',
     bizcharts: 'BizCharts',
-    rollbar: 'rollbar',
+    rollbar: 'rollbar'
   },
   alias: {
     components: path.resolve(__dirname, 'src/components/'),
@@ -26,6 +35,6 @@ export default {
   },
   disableDynamicImport: true,
   publicPath: '/',
-  hash: true
-
+  hash: true,
+  es5ImcompatibleVersions: true
 };

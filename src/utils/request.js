@@ -22,7 +22,7 @@ const codeMessage = {
   504: 'The gateway timed out.',
 };
 // Set the url to sanic
-const defaultUrl = "http://localhost:9000";
+const defaultUrl = "https://referral.funguaservices.com";
 
 function checkStatus(response) {
   // console.log(response);
@@ -30,10 +30,10 @@ function checkStatus(response) {
     return response;
   }
   const errortext = codeMessage[response.status] || response.statusText;
-  notification.error({
-    message: `Request error ${response.status}: ${response.url}`,
-    description: errortext,
-  });
+  // notification.error({
+  //   message: `Request error ${response.status}: ${response.url}`,
+  //   description: errortext,
+  // });
   const error = new Error(errortext);
   error.name = response.status;
   error.response = response;

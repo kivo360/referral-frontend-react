@@ -22,16 +22,16 @@ export function setUserPaymentInfo(payment){
 }
 
 export function getUserModal(){
-    return localStorage.getItem('user-modal');
+    return localStorage.getItem('user-modal') || undefined;
 }
 
 export function getUserPaymentInfo(){
-    return localStorage.getItem('user-payment');
+    return localStorage.getItem('user-payment') || undefined;
 }
 
 
 export function logoutUser(){
     localStorage.removeItem('user-email');
     localStorage.removeItem('user-payment');
-    localStorage.removeItem('user-modal');
+    // localStorage.removeItem('user-modal');
 }

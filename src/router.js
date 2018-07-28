@@ -1,7 +1,6 @@
 import React from 'react';
 import { routerRedux, Route, Switch } from 'dva/router';
 import { LocaleProvider } from 'antd';
-import zhCN from 'antd/lib/locale-provider/zh_CN';
 import enUS from 'antd/lib/locale-provider/en_US';
 import { getRouterData } from './common/router';
 import Authorized from './utils/Authorized';
@@ -23,7 +22,7 @@ function RouterConfig({ history, app }) {
             path="/"
             render={props => <BasicLayout {...props} />}
             authority={['admin', 'user']}
-            redirectPath={getQueryPath('/user/login', {
+            redirectPath={getQueryPath('/user/register', {
               redirect: window.location.href,
             })}
           />
