@@ -4,7 +4,6 @@
   "description": "An out-of-box UI solution for enterprise applications",
   "private": true,
   "scripts": {
-    "precommit": "npm run lint-staged",
     "start": "cross-env ESLINT=none roadhog dev",
     "start:no-proxy": "cross-env NO_PROXY=true ESLINT=none roadhog dev",
     "build": "cross-env ESLINT=none COMPRESS=none roadhog build",
@@ -18,7 +17,6 @@
     "test": "roadhog test",
     "test:component": "roadhog test ./src/components",
     "test:all": "node ./tests/run-tests.js",
-    "deploy": "npm run build && aws s3 sync dist/ s3://invite.funguaservices.com",
     "prettier": "prettier --write ./src/**/**/**/*"
   },
   "dependencies": {
