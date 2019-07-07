@@ -22,7 +22,7 @@ const codeMessage = {
   504: 'The gateway timed out.',
 };
 // Set the url to sanic
-const defaultUrl = "https://referral.funguaservices.com";
+const defaultUrl = 'https://localhost:9000';
 
 function checkStatus(response) {
   // console.log(response);
@@ -40,8 +40,7 @@ function checkStatus(response) {
   throw error;
 }
 
-
-function printResponse(response){
+function printResponse(response) {
   console.log(response);
 }
 
@@ -53,13 +52,11 @@ function printResponse(response){
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, options) {
-
   const checkUrlDepth = url.includes(defaultUrl);
   const urlDetails = {};
-  if (checkUrlDepth === false){
-    urlDetails.server = defaultUrl+url;
-  }
-  else{
+  if (checkUrlDepth === false) {
+    urlDetails.server = defaultUrl + url;
+  } else {
     urlDetails.server = url;
   }
   const defaultOptions = {
@@ -67,10 +64,9 @@ export default function request(url, options) {
   };
   const newOptions = { ...defaultOptions, ...options };
   newOptions.headers = {
-    'Access-Control-Allow-Origin': "*",
+    'Access-Control-Allow-Origin': '*',
     ...newOptions.headers,
   };
-
 
   if (
     newOptions.method === 'POST' ||
@@ -81,7 +77,7 @@ export default function request(url, options) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': "*",
+        'Access-Control-Allow-Origin': '*',
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
@@ -89,12 +85,11 @@ export default function request(url, options) {
       // newOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
-        'Access-Control-Allow-Origin': "*",
+        'Access-Control-Allow-Origin': '*',
         ...newOptions.headers,
       };
     }
-    newOptions.mode = "no-cors";
-    
+    newOptions.mode = 'no-cors';
   }
 
   return fetch(urlDetails.server, newOptions)

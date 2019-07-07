@@ -5,38 +5,36 @@ export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
 }
 
-export function convertDateTime(timestamp){
+export function convertDateTime(timestamp) {
   // Converts the timestamp into a consistent date and a formatted version of date
-  const convertedDate = new Date((timestamp * 1000));
+  const convertedDate = new Date(timestamp * 1000);
   // Create a composite string
 
   const month = convertedDate.getMonth();
   const day = convertedDate.getDate();
   const year = convertedDate.getFullYear();
 
-  const composite =  (month+1) + "/" + day + "/" + year;
-  console.log(composite);
+  const composite = month + 1 + '/' + day + '/' + year;
   return composite;
 }
 
-export function occurrence (array) {  
+export function occurrence(array) {
   const result = {};
 
   if (array instanceof Array) {
-      array.forEach((v, i) => {
-          if (!result[v]) {
-              result[v] = [i];
-          } else {
-              result[v].push(i);
-          }
-      });
-      Object.keys(result).forEach((v) => {
-          result[v] = {"index": result[v], "length": result[v].length};
-      });
+    array.forEach((v, i) => {
+      if (!result[v]) {
+        result[v] = [i];
+      } else {
+        result[v].push(i);
+      }
+    });
+    Object.keys(result).forEach(v => {
+      result[v] = { index: result[v], length: result[v].length };
+    });
   }
   return result;
-};
-
+}
 
 export function getTimeDistance(type) {
   const now = new Date();
@@ -116,7 +114,10 @@ function accMul(arg1, arg2) {
 export function digitUppercase(n) {
   const fraction = ['angle', 'Minute'];
   const digit = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-  const unit = [['yuan', 'Ten thousand', 'Billion'], ['', 'ten', 'hundred', 'thousand', 'Ten thousand']];
+  const unit = [
+    ['yuan', 'Ten thousand', 'Billion'],
+    ['', 'ten', 'hundred', 'thousand', 'Ten thousand'],
+  ];
   let num = Math.abs(n);
   let s = '';
   fraction.forEach((item, index) => {
