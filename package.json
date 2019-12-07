@@ -1165,7 +1165,7 @@
     "semver": "5.5.0",
     "semver-diff": "2.1.0",
     "selfsigned": "1.10.3",
-    "serialize-javascript": "1.5.0",
+    "serialize-javascript": "2.1.1",
     "serve-index": "1.9.1",
     "send": "0.16.2",
     "serviceworker-cache-polyfill": "4.0.0",
