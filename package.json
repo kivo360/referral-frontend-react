@@ -22,7 +22,7 @@
   "dependencies": {
     "abs-svg-path": "0.1.1",
     "abab": "1.0.4",
-    "acorn": "5.7.1",
+    "acorn": "7.1.1",
     "acorn-dynamic-import": "2.0.2",
     "accepts": "1.3.5",
     "acorn-jsx": "4.1.1",
