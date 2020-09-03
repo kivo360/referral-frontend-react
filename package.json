@@ -997,7 +997,7 @@
     "proxy-from-env": "1.0.0",
     "public-encrypt": "4.0.2",
     "public-ip": "2.4.0",
-    "puppeteer": "1.5.0",
+    "puppeteer": "5.2.1",
     "pump": "2.0.1",
     "punycode": "2.1.1",
     "q": "1.5.1",
@@ -1447,7 +1447,7 @@
     "uglifyjs-webpack-plugin": "^1.2.7"
   },
   "optionalDependencies": {
-    "puppeteer": "^1.4.0"
+    "puppeteer": "^5.2.1"
   },
   "lint-staged": {
     "**/*.{js,jsx,less}": [
