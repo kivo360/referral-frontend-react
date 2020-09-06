@@ -522,7 +522,7 @@
     "graphlib": "2.1.5",
     "gzip-size": "3.0.0",
     "handle-thing": "1.2.5",
-    "handlebars": "4.0.11",
+    "handlebars": "4.7.6",
     "har-validator": "4.2.1",
     "hard-source-webpack-plugin": "0.6.12",
     "has": "1.0.3",
