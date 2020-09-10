@@ -559,7 +559,7 @@
     "http-deceiver": "1.2.7",
     "http-errors": "1.6.3",
     "http-parser-js": "0.4.13",
-    "http-proxy": "1.17.0",
+    "http-proxy": "1.18.1",
     "http-proxy-middleware": "0.17.4",
     "http-signature": "1.1.1",
     "https-browserify": "1.0.0",
