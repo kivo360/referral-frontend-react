@@ -828,7 +828,7 @@
     "nanomatch": "1.2.13",
     "nearley": "2.13.0",
     "nice-try": "1.0.4",
-    "node-fetch": "1.7.3",
+    "node-fetch": "2.6.1",
     "no-case": "2.3.2",
     "node-forge": "0.7.5",
     "next-tick": "1.0.0",
